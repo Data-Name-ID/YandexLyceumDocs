@@ -27,7 +27,7 @@
 * Клонируем [репозиторий](https://github.com/rodion-gudz/YandexLyceumDocs)
 
 ```shell
-git clone https://github.com/Data-Name-ID/YandexLyceumDocs.git
+git clone -b backup https://github.com/Data-Name-ID/YandexLyceumDocs.git
 ```
 
 * Переходим в каталог репозитория и устанавливаем зависимости
@@ -37,7 +37,7 @@ cd YandexLyceumDocs
 pip install -r requirements.txt
 ```
 
-* Запускаем программу с логином и паролем аккаунта Yandex 
+* Запускаем программу с логином и паролем аккаунта Yandex
   * Аргументы `--materials` и `--solutions` используются для загрузки материалов и решений (Опционально)
   * Аргумент `--teacher` используется для скачивания курсов в режиме учителя (Опционально)
 
