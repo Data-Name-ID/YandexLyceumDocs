@@ -2,3 +2,4 @@ Jinja2
 requests
 tqdm
 https://github.com/Data-Name-ID/PyYandexLMS/tarball/master
+ua-generator
