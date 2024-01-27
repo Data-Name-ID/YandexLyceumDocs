@@ -21,7 +21,7 @@
   * Выбрать **"Вход с паролем"**.
     <details>
     <summary>Скриншот</summary>
-    ![Courses_Page](https://user-images.githubusercontent.com/70765138/170548269-2c22fc24-4dde-42db-8bc4-098ebc2b4135.jpeg)
+    <img src="https://user-images.githubusercontent.com/70765138/170548269-2c22fc24-4dde-42db-8bc4-098ebc2b4135.jpeg">
     </details>
 
 * Клонируем [репозиторий](https://github.com/rodion-gudz/YandexLyceumDocs)
