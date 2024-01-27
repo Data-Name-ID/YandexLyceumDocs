@@ -15,7 +15,10 @@ from generator.templates import (
     problem_template,
     task_template,
 )
-from generator.utils import get_neighboring_items, parse_resources_and_paragraph
+from generator.utils import (
+    get_neighboring_items,
+    parse_resources_and_paragraph,
+)
 
 args = parse_arguments()
 
@@ -23,7 +26,11 @@ client = Client(login=args.login, password=args.password)
 
 user = client.get_user(with_parents=False, with_children=False)
 
-courses = user.courses_summary.teacher if args.teacher else user.courses_summary.student
+courses = (
+    user.courses_summary.teacher
+    if args.teacher
+    else user.courses_summary.student
+)
 
 print("Список курсов:")
 
@@ -49,11 +56,28 @@ render_page(
     courses=courses,
 )
 
-shutil.copytree(os.path.join("templates", "css"), os.path.join(docs_path, "css"))
+shutil.copytree(
+    os.path.join("templates", "css"), os.path.join(docs_path, "css")
+)
 shutil.copytree(os.path.join("templates", "js"), os.path.join(docs_path, "js"))
 
 courses_path = os.path.join(docs_path, "courses")
 os.mkdir(courses_path)
+
+
+def get_material_url(material, lesson):
+    material = client.get(
+        (
+            'https://lms.yandex.ru/download/materials/'
+            f'{material.id}?lessonId={lesson.id}'
+        )
+    )
+
+    if material:
+        return material.url
+    else:
+        return '#'
+
 
 print("\nСкачивание курсов...")
 for course in courses:
@@ -88,13 +112,14 @@ for course in courses:
             materials = client.get_materials(
                 lesson_id=lesson.id,
             )
-            material_urls = {
-                material.id: client.get(
-                    f"https://lyceum.yandex.ru/download/materials/{material.id}?lessonId={lesson.id}"
-                ).url
-                for material in materials
-                if material.type != "textbook"
-            }
+
+            material_urls = dict()
+
+            for material in materials:
+                if material.type != "textbook":
+                    material_urls[material.id] = get_material_url(
+                        material, lesson
+                    )
         else:
             materials = None
             material_urls = None
@@ -117,7 +142,6 @@ for course in courses:
         )
 
         if task_groups and any(task_group.tasks for task_group in task_groups):
-
             tasks_path = os.path.join(lesson_path, "tasks")
             os.mkdir(tasks_path)
 
@@ -135,12 +159,15 @@ for course in courses:
                         )
 
                         if args.solutions and task_info.solution_id:
-                            solution_information = client.get_solution_information(
-                                solution_id=task_info.solution_id,
+                            solution_information = (
+                                client.get_solution_information(
+                                    solution_id=task_info.solution_id,
+                                )
                             )
 
                             if hasattr(
-                                solution_information.solution.latest_submission, "file"
+                                solution_information.solution.latest_submission,
+                                "file",
                             ):
                                 solution_code = (
                                     solution_information.solution.latest_submission.file.source_code
@@ -176,8 +203,9 @@ for course in courses:
                             sections_types=sections_types,
                         )
 
-        if task_groups and any(task_group.problems for task_group in task_groups):
-
+        if task_groups and any(
+            task_group.problems for task_group in task_groups
+        ):
             problems_path = os.path.join(lesson_path, "problems")
             os.mkdir(problems_path)
 
@@ -189,7 +217,6 @@ for course in courses:
             for task_group in task_groups:
                 if task_group.problems:
                     for problem in task_group.problems:
-
                         previous_id, next_id = get_neighboring_items(
                             items=problems_id,
                             item=problem.id,
@@ -223,7 +250,6 @@ for course in courses:
             and materials
             and any(material.type == "textbook" for material in materials)
         ):
-
             materials_path = os.path.join(lesson_path, "materials")
             os.mkdir(materials_path)
 
